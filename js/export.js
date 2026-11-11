@@ -3,9 +3,8 @@ window.MXS = window.MXS || {};
 (function (M) {
   const PLAYER_CSS = `
 html,body{margin:0;height:100%;background:#0b0d17;overflow:hidden;font-family:system-ui,'Segoe UI',sans-serif}
-.pg{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;display:none;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.pg.on{display:block;animation:pgIn .35s ease}
-@keyframes pgIn{from{opacity:0}to{opacity:1}}
+.pg{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;display:none;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.pg.on{display:block}
 .ctl{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(15,18,35,.82);color:#fff;padding:8px 12px;border-radius:999px;z-index:10;opacity:0;transition:opacity .3s}
 body.ui .ctl,.ctl:hover{opacity:1}
 .ctl button{background:rgba(255,255,255,.12);border:0;color:#fff;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer}
@@ -22,7 +21,7 @@ body.ui .ctl,.ctl:hover{opacity:1}
   const PLAYER_JS = `(function(){
 var pages=[].slice.call(document.querySelectorAll('.pg')),i=0,ct=document.getElementById('ct'),t;
 function fit(){var s=Math.min(innerWidth/1280,innerHeight/720);pages.forEach(function(p){p.style.transform='translate(-50%,-50%) scale('+s+')';});}
-function go(n){i=Math.max(0,Math.min(pages.length-1,n));pages.forEach(function(p,k){p.classList.toggle('on',k===i);});
+function go(n){var prev=i;i=Math.max(0,Math.min(pages.length-1,n));if(i===prev&&pages[i].classList.contains('on'))return;pages.forEach(function(p,k){p.classList.toggle('on',k===i);});mxAnimate(pages[i],i<prev?-1:1);
 ct.textContent=(i+1)+' / '+pages.length;document.getElementById('pv').disabled=i===0;document.getElementById('nx').disabled=i===pages.length-1;
 try{history.replaceState(null,'','#'+(i+1));}catch(e){}}
 function fs(){var d=document;if(d.fullscreenElement){d.exitFullscreen();}else if(d.documentElement.requestFullscreen){d.documentElement.requestFullscreen();}}
@@ -49,12 +48,13 @@ var h=parseInt(location.hash.slice(1),10);fit();go(h?h-1:0);ui();
 <title>${M.esc(deck.title)}</title>
 <meta name="generator" content="Mindx Slide">
 <link rel="stylesheet" href="${M.esc(M.fontLink([deck.font]))}">
-<style>${M.SLIDE_CSS}${PLAYER_CSS}</style></head>
+<style>${M.SLIDE_CSS}${M.ANIM_CSS}${PLAYER_CSS}</style></head>
 <body><div id="stage">
 ${pages}
 </div>
 <div class="ctl"><button id="pv" title="Slide trước (←)">‹</button><span id="ct"></span><button id="nx" title="Slide sau (→ / Space)">›</button><button id="fs" title="Toàn màn hình (F)">⛶</button></div>
-<script>${PLAYER_JS}<\/script></body></html>`;
+<script>${M.animateSlide.toString()}
+${PLAYER_JS}<\/script></body></html>`;
     M.download(M.slug(deck.title) + '.html', html, 'text/html;charset=utf-8');
   };
 

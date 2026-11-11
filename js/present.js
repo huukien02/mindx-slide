@@ -3,6 +3,7 @@ window.MXS = window.MXS || {};
 (function (M) {
   let deck = null, idx = 0, idleTimer = null;
   const $ = s => document.querySelector(s);
+  const box = () => $('#presFit');
 
   function fit() {
     const stage = $('#presStage'), box = $('#presFit');
@@ -12,10 +13,11 @@ window.MXS = window.MXS || {};
     box.style.setProperty('--s', s);
   }
   function show(i) {
+    const prev = idx;
     idx = Math.max(0, Math.min(deck.slides.length - 1, i));
-    const box = $('#presFit');
-    box.innerHTML = M.renderSlide(deck.slides[idx], deck, { index: idx, total: deck.slides.length });
-    box.classList.remove('pres-anim'); void box.offsetWidth; box.classList.add('pres-anim');
+    if (idx === prev) return; // đang ở slide đầu/cuối: không chạy lại hiệu ứng
+    box().innerHTML = `<div class="pres-scale">${M.renderSlide(deck.slides[idx], deck, { index: idx, total: deck.slides.length })}</div>`;
+    M.animateSlide(box(), idx < prev ? -1 : 1);
     $('#presCounter').textContent = `${idx + 1} / ${deck.slides.length}`;
     $('#presPrev').disabled = idx === 0;
     $('#presNext').disabled = idx === deck.slides.length - 1;
@@ -46,6 +48,7 @@ window.MXS = window.MXS || {};
     document.body.classList.add('presenting');
     M.Present._fs = false;
     if (p.requestFullscreen) p.requestFullscreen().then(() => { M.Present._fs = true; fit(); }).catch(() => {});
+    idx = -1;
     show(start || 0);
     wake();
     document.addEventListener('keydown', onKey);

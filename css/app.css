@@ -212,9 +212,7 @@ body { font-family: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans
 .presenter { position: fixed; inset: 0; z-index: 2000; background: #07080f; }
 .pres-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .pres-fit { position: relative; overflow: hidden; flex: none; --s: 1; }
-.pres-fit > .mx-slide { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(var(--s)); }
-.pres-anim { animation: presIn .35s ease; }
-@keyframes presIn { from { opacity: 0; } to { opacity: 1; } }
+.pres-fit > .pres-scale { position: absolute; left: 0; top: 0; width: 1280px; height: 720px; transform-origin: 0 0; transform: scale(var(--s)); }
 .pres-ctl { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; background: rgba(15, 18, 35, .85); color: #fff; padding: 8px 12px; border-radius: 999px; opacity: 0; transition: opacity .3s; z-index: 5; }
 .presenter.show-ui .pres-ctl, .pres-ctl:hover { opacity: 1; }
 .pres-ctl button { width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .13); color: #fff; font-size: 1.1rem; }
